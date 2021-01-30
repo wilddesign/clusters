@@ -13,7 +13,7 @@ public class ChemicalBond {
 
   private String symbol1;
   private String symbol2;
-  private String bond_length;
+  private Float length;
 
   public Integer getId() {
     return id;
@@ -39,11 +39,12 @@ public class ChemicalBond {
     this.symbol2 = symbol2;
   }
 
-  public String getBondLength() {
-    return bond_length;
+  public Float getLength() {
+    return length;
   }
 
-  public void setBondLength(String bond_length) {
-    this.bond_length = bond_length;
+  public void setLength(String length) {
+    this.length = Float.parseFloat(length);
   }
+
 }

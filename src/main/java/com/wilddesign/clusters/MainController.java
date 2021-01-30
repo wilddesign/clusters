@@ -20,17 +20,13 @@ public class MainController {
   public @ResponseBody String addNewChemicalBond (@RequestBody Iterable<ChemicalBond> data) {
     // @ResponseBody means the returned String is the response, not a view name
     // @RequestParam means it is a parameter from the GET or POST request
-
-    //User n = new User(user);
-  //  n.setName(user.name);
-  //  n.setEmail(user.email);
     chemicalBondRepository.saveAll(data);
     return "Saved";
   }
 
-/*  @GetMapping(path="/all")
-  public @ResponseBody Iterable<User> getAllUsers() {
+  @GetMapping(path="/all")
+  public @ResponseBody Iterable<ChemicalBond> getAllChemicalBonds() {
     // This returns a JSON or XML with the users
-    return userRepository.findAll();
-  }*/
+    return chemicalBondRepository.findAll();
+  }
 }
