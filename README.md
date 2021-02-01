@@ -1,5 +1,5 @@
 # clusters
-Molecular graph analysis with Spring MVC
+## Molecular graph analysis with Spring MVC + SQL CRUD
 
 
 I have to learn Java, so this is my training CRUD project.
@@ -18,9 +18,9 @@ There are clusters. They are sets of atoms of different kinds(tungsten, cobalt, 
 *They are not real scientific calculations, just a Java & MySQL training project.
 
 
-Endpoints
+## Endpoints
 As for now it supports following functions:
-POST /dataset/add
+###POST /dataset/add
 Send JSON containing a database of entries of following form (unminified):
 {
   symbol1: "Ax",
@@ -29,17 +29,17 @@ Send JSON containing a database of entries of following form (unminified):
 }
 A, B are element abbreviations, x,y numbers and length is a number
 
-GET dataset/all
+###GET dataset/all
 Returns whole dataset
 
-GET /dataset/sphere?symbol=Ax
+###GET /dataset/sphere?symbol=Ax
 Returns all bonds to atom Ax in the database
 
-GET /dataset/sphere-stats?symbol=Ax
+###GET /dataset/sphere-stats?symbol=Ax
 Returns statistics (mean and standard deviation) for all chemical bonds involving atom Ax
 
-GET /dataset/sphere-atom-type?symbol=A
+###GET /dataset/sphere-atom-type?symbol=A
 Returns all bonds to atoms of type A in the database
 
-GET /dataset/sphere-stats-atom-type?symbol=A
+###GET /dataset/sphere-stats-atom-type?symbol=A
 Statistics for all atoms of type A
