@@ -10,4 +10,5 @@ import com.wilddesign.clusters.ChemicalBond;
 public interface ChemicalBondRepository extends CrudRepository<ChemicalBond, Integer> {
 
   Iterable<ChemicalBond> findBySymbol1OrSymbol2(String s1, String s2);
+  Iterable<ChemicalBond> findBySymbol1StartsWithOrSymbol2StartsWith(String s1, String s2);
 }

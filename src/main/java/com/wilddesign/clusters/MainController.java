@@ -56,4 +56,30 @@ public class MainController {
 
     return results;
   }
+
+  @GetMapping(path="/sphere-atom-type")
+  public @ResponseBody Iterable<ChemicalBond> getCoordinationSphereByAtomType(@RequestParam String type) {
+    // This returns a JSON or XML with the users
+    // find a bond where symbol1 or symbol2 matches param
+    return chemicalBondRepository.findBySymbol1StartsWithOrSymbol2StartsWith(type, type);
+  }
+
+  @GetMapping(path="/sphere-stats-atom-type")
+  public @ResponseBody CalculateSphereStatsResultComponent getCoordinationSphereStatsByAtomType(@RequestParam String type) {
+    // This returns a JSON or XML with the users
+    // find a sphere as in above, calculate stats and return
+    /*
+    finds coordination sphere and pours it into service that calculates mean and stdev
+    */
+    //now stats for all atoms of the same type, not just one
+    Iterable<ChemicalBond> coordinationSphere = chemicalBondRepository.findBySymbol1StartsWithOrSymbol2StartsWith(type, type);
+    //extract lengths
+    Double[] lengths = calculateSphereStatsService.extractLengths(coordinationSphere);
+    Double mean = calculateSphereStatsService.calculateMean(lengths);
+    Double stdDev = calculateSphereStatsService.calculateStdDev(lengths);
+
+    CalculateSphereStatsResultComponent results = new CalculateSphereStatsResultComponent(mean, stdDev);
+
+    return results;
+  }
 }
