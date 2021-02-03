@@ -65,4 +65,12 @@ public class ChemicalBond {
     this.type2 = type2;
   }
 
+  public String getAnotherSymbol(String symbol){
+    if (this.symbol1 == symbol) {
+        return this.symbol2;
+    } else {
+        return this.symbol1;
+    }
+  }
+
 }

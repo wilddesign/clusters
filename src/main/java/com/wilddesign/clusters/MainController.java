@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Iterables;
+
 
 @Controller // This means that this class is a Controller
 @RequestMapping(method = RequestMethod.POST, headers ={"Accept=application/json"}, path = "/dataset") // This means URL's start with /demo (after Application path)
@@ -19,11 +22,11 @@ public class MainController {
   private CalculateSphereStatsService calculateSphereStatsService;
 
   @PostMapping(path="/add") // Map ONLY POST Requests
-  public @ResponseBody String addNewChemicalBond (@RequestBody Iterable<ChemicalBond> data) {
+  public @ResponseBody void addNewChemicalBond (@RequestBody Iterable<ChemicalBond> data) {
     // @ResponseBody means the returned String is the response, not a view name
     // @RequestParam means it is a parameter from the GET or POST request
     chemicalBondRepository.saveAll(data);
-    return "Saved";
+    return;
   }
 
   @GetMapping(path="/all")
@@ -33,10 +36,10 @@ public class MainController {
   }
 
   @GetMapping(path="/all-delete")
-  public @ResponseBody String deleteAllChemicalBonds() {
+  public @ResponseBody void deleteAllChemicalBonds() {
     // This returns a JSON or XML with the users
     chemicalBondRepository.deleteAll();
-    return "Data deleted.";
+    return;
   }
 
   @GetMapping(path="/sphere")
@@ -90,5 +93,40 @@ public class MainController {
     return results;
   }
 
-  //return all apart by n bonds from
+  @GetMapping(path="/path")
+  // parsing the data as a graph would be the most general solution, which would allow for any graph paths and traversals, but only M-C-N-M paths are chemically relevant now
+  // create an adjacency matrix with the data
+  public @ResponseBody String getPath(@RequestParam String startsymbol1, @RequestParam String startsymbol2, @RequestParam String endsymbol1, @RequestParam String endsymbol2) {
+    Iterable<ChemicalBond> data = chemicalBondRepository.findAll();
+    ChemicalBond firstEntry = Iterables.getFirst(data, null);
+    Integer firstId = 0;
+    if(firstEntry != null) {
+      firstId = firstEntry.getId(); // database generated ids are counted since the creation of the database, so it has to be normalized
+    }
+
+    DatabaseGraph dG = new DatabaseGraph(data);
+    // find the start bond
+
+    ChemicalBond searchStart1 =  chemicalBondRepository.findBySymbol1AndSymbol2(startsymbol1, startsymbol2);
+    ChemicalBond searchStart2 =  chemicalBondRepository.findBySymbol2AndSymbol1(startsymbol1, startsymbol2);
+    if(searchStart1 != null) {
+      Integer startBond = searchStart1.getId();
+    } else if (searchStart2 != null) {
+      Integer startBond = searchStart2.getId();
+    }
+
+    // now find the end bond
+    ChemicalBond searchEnd1 =  chemicalBondRepository.findBySymbol1AndSymbol2(endsymbol1, endsymbol2);
+    ChemicalBond searchEnd2 =  chemicalBondRepository.findBySymbol2AndSymbol1(endsymbol1, endsymbol2);
+    if(searchEnd1 != null) {
+      Integer endBond = searchEnd1.getId();
+    } else if (searchEnd2 != null) {
+      Integer endBond = searchEnd2.getId();
+    }
+     dG.findDijkstraPath(startBond, endBond, firstId);
+    // returns set of integers and ther corrensponding data entries are loaded from the repository
+    return "Done";
+    // dg return dijkstra
+
+  }
 }
