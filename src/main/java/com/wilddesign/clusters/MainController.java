@@ -32,6 +32,13 @@ public class MainController {
     return chemicalBondRepository.findAll();
   }
 
+  @GetMapping(path="/all-delete")
+  public @ResponseBody String deleteAllChemicalBonds() {
+    // This returns a JSON or XML with the users
+    chemicalBondRepository.deleteAll();
+    return "Data deleted.";
+  }
+
   @GetMapping(path="/sphere")
   public @ResponseBody Iterable<ChemicalBond> getCoordinationSphere(@RequestParam String symbol) {
     // This returns a JSON or XML with the users
@@ -82,4 +89,6 @@ public class MainController {
 
     return results;
   }
+
+  //return all apart by n bonds from
 }
