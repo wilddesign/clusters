@@ -35,22 +35,22 @@ Send JSON containing a database of entries of following form (unminified):
 A, B are element abbreviations, x,y numbers and length is a number
 
 ### GET dataset/all
-Returns whole dataset
+Returns whole dataset.
 
 ### GET /dataset/sphere?symbol=Ax
-Returns all bonds to atom Ax in the database
+Returns all bonds to atom Ax in the database.
 
 ### GET /dataset/sphere-stats?symbol=Ax
-Returns statistics (mean and standard deviation) for all chemical bonds involving atom Ax
+Returns statistics (mean and standard deviation) for all chemical bonds involving atom Ax.
 
 ### GET /dataset/sphere-atom-type?type=A
-Returns all bonds to atoms of type A in the database
+Returns all bonds to atoms of type A in the database.
 
 ### GET /dataset/sphere-stats-atom-type?type=A
-Statistics for all atoms of type A
+Statistics for all atoms of type A.
 
 ### GET /dataset/bond?symbol1=Ax&symbol2=By
-Returns bond entry for given atom symbols or null if the is no such entry.
+Returns bond entry for given atom symbols or null if there is no such entry.
 
 ### GET /dataset/path?startsymbol1=Ax&startsymbol2=By&endsymbol1=Cz&endsymbol2=Dp
-Constructs a graph with the database entries and performs a Breadth-First Search of this graph to return the shortest path and the first and the last bond are the bonds provided in params.
+Constructs a graph with the database entries and performs a Breadth-First Search of this graph to return the shortest path between the bonds provided in params.
