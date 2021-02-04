@@ -15,6 +15,8 @@ public interface ChemicalBondRepository extends CrudRepository<ChemicalBond, Int
   Iterable<ChemicalBond> findBySymbol2AndSymbol1Not(String s1, String s2);
 
   Iterable<ChemicalBond> findBySymbol1AndSymbol2(String s1, String s2);
-  Iterable<ChemicalBond> findBySymbol2AndSymbol1(String s1, String s2);  
+  Iterable<ChemicalBond> findBySymbol2AndSymbol1(String s1, String s2);
+
+  Iterable<ChemicalBond> findAllById(Integer id);
 
 }

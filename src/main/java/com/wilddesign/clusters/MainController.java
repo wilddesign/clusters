@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
+import java.util.ArrayList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Iterables;
 
@@ -93,10 +94,46 @@ public class MainController {
     return results;
   }
 
+  @GetMapping(path="/bond")
+  // parsing the data as a graph would be the most general solution, which would allow for any graph paths and traversals, but only M-C-N-M paths are chemically relevant now
+  // create an adjacency matrix with the data
+  public @ResponseBody ChemicalBond getBond(@RequestParam String symbol1, @RequestParam String symbol2) {
+    // find the start bond
+
+    Iterable<ChemicalBond> searchStart1 =  chemicalBondRepository.findBySymbol1AndSymbol2(symbol1, symbol2);
+    Iterable<ChemicalBond> searchStart2 =  chemicalBondRepository.findBySymbol2AndSymbol1(symbol1, symbol2);
+
+    ChemicalBond firstSearchStart1 = Iterables.getFirst(searchStart1, null);
+    ChemicalBond firstSearchStart2 = Iterables.getFirst(searchStart2, null);
+
+    if(firstSearchStart1 != null) {
+      return firstSearchStart1;
+    } else if (firstSearchStart2 != null) {
+      return firstSearchStart2;
+    }
+    return null;
+  }
+
+  @GetMapping(path="/id")
+  // parsing the data as a graph would be the most general solution, which would allow for any graph paths and traversals, but only M-C-N-M paths are chemically relevant now
+  // create an adjacency matrix with the data
+  public @ResponseBody ChemicalBond getId(@RequestParam Integer id) {
+    // find the start bond
+
+    Iterable<ChemicalBond> searchStart1 =  chemicalBondRepository.findAllById(id);
+
+    ChemicalBond firstSearchStart1 = Iterables.getFirst(searchStart1, null);
+
+    if(firstSearchStart1 != null) {
+      return firstSearchStart1;
+    }
+    return null;
+  }
+
   @GetMapping(path="/path")
   // parsing the data as a graph would be the most general solution, which would allow for any graph paths and traversals, but only M-C-N-M paths are chemically relevant now
   // create an adjacency matrix with the data
-  public @ResponseBody String getPath(@RequestParam String startsymbol1, @RequestParam String startsymbol2, @RequestParam String endsymbol1, @RequestParam String endsymbol2) {
+  public @ResponseBody ChemicalBond[] getPath(@RequestParam String startsymbol1, @RequestParam String startsymbol2, @RequestParam String endsymbol1, @RequestParam String endsymbol2) {
     Iterable<ChemicalBond> data = chemicalBondRepository.findAll();
     ChemicalBond firstEntry = Iterables.getFirst(data, null);
     Integer firstId = 0;
@@ -107,26 +144,51 @@ public class MainController {
     DatabaseGraph dG = new DatabaseGraph(data);
     // find the start bond
 
-    ChemicalBond searchStart1 =  chemicalBondRepository.findBySymbol1AndSymbol2(startsymbol1, startsymbol2);
-    ChemicalBond searchStart2 =  chemicalBondRepository.findBySymbol2AndSymbol1(startsymbol1, startsymbol2);
-    if(searchStart1 != null) {
-      Integer startBond = searchStart1.getId();
-    } else if (searchStart2 != null) {
-      Integer startBond = searchStart2.getId();
+    Iterable<ChemicalBond> searchStart1 =  chemicalBondRepository.findBySymbol1AndSymbol2(startsymbol1, startsymbol2);
+    Iterable<ChemicalBond> searchStart2 =  chemicalBondRepository.findBySymbol2AndSymbol1(startsymbol1, startsymbol2);
+
+    ChemicalBond firstSearchStart1 = Iterables.getFirst(searchStart1, null);
+    Integer firstSearchStart1Id = 0;
+    ChemicalBond firstSearchStart2 = Iterables.getFirst(searchStart2, null);
+    Integer firstSearchStart2Id = 0;
+    Integer startBond = 0;
+
+    if(firstSearchStart1 != null) {
+      startBond = firstSearchStart1.getId();
+    } else if (firstSearchStart1 != null) {
+      startBond = firstSearchStart2.getId();
     }
 
     // now find the end bond
-    ChemicalBond searchEnd1 =  chemicalBondRepository.findBySymbol1AndSymbol2(endsymbol1, endsymbol2);
-    ChemicalBond searchEnd2 =  chemicalBondRepository.findBySymbol2AndSymbol1(endsymbol1, endsymbol2);
-    if(searchEnd1 != null) {
-      Integer endBond = searchEnd1.getId();
-    } else if (searchEnd2 != null) {
-      Integer endBond = searchEnd2.getId();
-    }
-     dG.findDijkstraPath(startBond, endBond, firstId);
-    // returns set of integers and ther corrensponding data entries are loaded from the repository
-    return "Done";
-    // dg return dijkstra
+    Iterable<ChemicalBond> searchEnd1 =  chemicalBondRepository.findBySymbol1AndSymbol2(endsymbol1, endsymbol2);
+    Iterable<ChemicalBond> searchEnd2 =  chemicalBondRepository.findBySymbol2AndSymbol1(endsymbol1, endsymbol2);
 
+    ChemicalBond firstSearchEnd1 = Iterables.getFirst(searchEnd1, null);
+    Integer firstSearchEnd1Id = 0;
+    ChemicalBond firstSearchEnd2 = Iterables.getFirst(searchEnd2, null);
+    Integer firstSearchEnd2Id = 0;
+    Integer endBond = 0;
+
+    if(firstSearchEnd1 != null) {
+      endBond = firstSearchEnd1.getId();
+    } else if (firstSearchEnd2 != null) {
+      endBond = firstSearchEnd2.getId();
+    }
+
+    Integer[] foundPath = dG.findBFSPath(startBond, endBond, firstId);
+    // returns set of integers and ther corrensponding data entries are loaded from the repository
+    ChemicalBond[] results = new ChemicalBond[foundPath.length];
+    for (Integer j = 0; j<foundPath.length; j++) {
+
+      Integer cId = (foundPath[j] == null)? 0 : foundPath[j];
+
+      Iterable<ChemicalBond> foundById = chemicalBondRepository.findAllById(cId+firstId);
+      ChemicalBond entry = Iterables.getFirst(foundById, null);
+      if(entry != null) {
+        results[j] = entry;
+      }
+
+    }
+    return results;
   }
 }
