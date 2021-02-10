@@ -9,8 +9,6 @@ Metal centers bear their properties: electric (don't forget the spectroscopic, w
 Additionally, functions involving machine learning algorithms will be employed.
 
 
-*They are not real scientific calculations, just a Java & MySQL training project.
-
 
 ## Endpoints
 As for now it supports following functions:
