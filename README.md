@@ -37,7 +37,7 @@ A, B are element abbreviations, x,y numbers and length is a number
 ### GET dataset/all
 Returns whole dataset.
 
-### GET dataset/all-delete
+### DELETE dataset/all
 Deletes whole dataset.
 
 ### GET dataset/id?id=zzz

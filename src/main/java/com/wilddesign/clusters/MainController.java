@@ -3,6 +3,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,7 +37,7 @@ public class MainController {
     return chemicalBondRepository.findAll();
   }
 
-  @GetMapping(path="/all-delete")
+  @DeleteMapping(path="/all")
   public @ResponseBody void deleteAllChemicalBonds() {
     // This returns a JSON or XML with the users
     chemicalBondRepository.deleteAll();
